@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Dashboard for viewing phishing simulation logs -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkylaB Security Dashboard</title>
+    <!-- Google Fonts already imported in CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="dashboard-body">
+    <!-- Header with branding and stats -->
+    <header class="header" role="banner">
+        <h1 class="logo">CYBERGRID</h1>
+        <p class="subtitle">BEHAVIORAL ANALYTICS TERMINAL</p>
+        <div class="stats">{{ logs|length }} ATTEMPTS TRACKED</div>
+    </header>
+
+    <!-- Main content area with log table -->
+    <main class="table__container">
+        {% if logs %}
+            <!-- Behavioral analytics table -->
+            <table class="dashboard__table" role="grid" aria-label="Phishing attempt logs">
+                <caption>Training simulation results with risk indicators</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">TIME</th>
+                        <th scope="col">USER</th>
+                        <th scope="col">SIG</th>
+                        <th scope="col">IP</th>
+                        <th scope="col">AGENT</th>
+                        <th scope="col">TIME(ms)</th>
+                        <th scope="col">TYPE(ms)</th>
+                        <th scope="col">MOUSE</th>
+                        <th scope="col">KEYS</th>
+                        <th scope="col">HINTS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in logs %}
+                    <tr>
+                        <td>{{ log.time }}</td>
+                        <td class="truncate">{{ log.user }}</td>
+                        <!-- Truncated hash for readability -->
+                        <td class="truncate">{{ log.hash }}</td>
+                        <td class="truncate">{{ log.ip }}</td>
+                        <td class="truncate">{{ log.agent }}</td>
+                        <!-- Risk coloring based on fast submission -->
+                        <td class="{% if log.timeToSubmit|float < 5000 %}metric--risk{% else %}metric--good{% endif %} truncate">
+                            {{ log.timeToSubmit }}
+                        </td>
+                        <!-- Risk based on typing speed (bot detection) -->
+                        <td class="{% if log.typingSpeed|float < 200 %}metric--risk{% else %}metric--good{% endif %} truncate">
+                            {{ log.typingSpeed }}
+                        </td>
+                        <td class="truncate">{{ log.mouseEntropy }}</td>
+                        <td>{{ log.keystrokes }}</td>
+                        <td>{{ '🛡️' if log.hintsShown == '1' else '' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <!-- Empty state for no logs -->
+            <section class="empty__state" aria-label="No data available">
+                <div class="empty__icon">📊</div>
+                <h2>NO BEHAVIORAL DATA</h2>
+                <p>
+                    Complete phishing simulations to capture behavioral fingerprints.
+                </p>
+            </section>
+        {% endif %}
+    </main>
+</body>
+</html>
+

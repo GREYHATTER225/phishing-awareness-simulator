@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Educational debrief page after phishing simulation -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkylaB AI Security Assistant</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='ai-chat.css') }}">
+
+</head>
+<body class="result-body" data-theme="light">
+    <!-- Fixed navigation to dashboard -->
+    <nav class="nav">
+        <a href="/dashboard" class="nav__link" aria-label="View analytics dashboard">
+            📊 Dashboard
+        </a>
+    </nav>
+
+    <!-- Main chat application structure -->
+    <main class="app__container" role="main">
+        <section class="chat__container" aria-label="Security analysis conversation">
+            <!-- Chat header with theme toggle -->
+            <header class="chat__header">
+                <span class="header__title">🤖 SkylaB AI Security Analysis</span>
+                <button class="theme__toggle" id="themeToggle" aria-label="Toggle theme">
+                    🌙 Dark
+                </button>
+            </header>
+
+            <!-- Scrollable conversation area -->
+            <section class="chat__messages" id="chatBox" role="log" aria-live="polite">
+                <!-- Dynamic messages rendered by JS -->
+            </section>
+
+            <!-- Footer with restart action -->
+            <footer class="footer">
+                <a href="/" class="btn" aria-label="Start new training simulation">
+                    🔄 New Training Simulation
+                </a>
+                <p class="safety__note">
+                    Pure simulation • No real credentials stored • Local training only
+                </p>
+            </footer>
+        </section>
+    </main>
+
+    <!-- Chat animation & theme logic -->
+    <script>
+        // Theme persistence functionality
+        function toggleTheme() {
+            const body = document.body;
+            const button = document.getElementById('themeToggle');
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            button.textContent = newTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+            localStorage.setItem('skylab-theme', newTheme);
+        }
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('skylab-theme');
+        if (savedTheme) {
+            document.body.setAttribute('data-theme', savedTheme);
+            const toggleBtn = document.getElementById('themeToggle');
+            toggleBtn.textContent = savedTheme === 'dark' ? '☀️ Light' : '🌙 Dark';
+        }
+
+        // Theme toggle event listener
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+        // Conversational content (educational debrief)
+        const educationalMessages = [
+            { role: 'ai', text: `Hi 👋 SkylaB AI here. I analyzed your recent login attempt using behavioral biometrics.` },
+            { role: 'ai', text: 'Captured data: mouse patterns, typing rhythm, hesitation metrics...' },
+            { role: 'user', text: 'I thought it was the real login portal and entered credentials...' },
+            { role: 'ai', text: '⚠️ Correct! That was precision-crafted phishing simulation.' },
+            { role: 'ai', text: 'Security audit complete - here are the 4 red flags I detected:' },
+            { role: 'ai', text: '🔍 Domain forensics: localhost detected (vs official *.skylab.com)' },
+            { role: 'ai', text: '🔒 TLS failure: Zero HTTPS certificate validation' },
+            { role: 'ai', text: '🎨 Visual deception: Non-standard glassmorphism UI fingerprint' },
+            { role: 'ai', text: '📧 Origin trace: security@skylab-support.com (spoofed)' },
+            { role: 'risk', text: '📊 LIVE RISK ASSESSMENT: ' },
+            { role: 'ai', text: '✅ Training success - all data logged locally only for your progress report.' },
+            { role: 'ai', text: '🎯 Master checklist:\n• URL exact match verification\n• HTTPS padlock confirmation\n• Link hover preview\n• 3-second pause before credentials' }
+        ];
+
+        let messageIndex = 0;
+        const chatBox = document.getElementById('chatBox');
+
+        // Simulated behavioral data for demo
+        const demoData = {
+            submitDelay: (Math.random() * 28 + 6.5).toFixed(1),
+            typingWPM: Math.floor(Math.random() * 38 + 28),
+            mouseEntropy: (Math.random() * 0.42 + 0.22).toFixed(2),
+            hesitationScore: Math.floor(Math.random() * 35 + 18),
+            riskScore: Math.floor(78 + Math.random() * 19)
+        };
+        educationalMessages[9].text = 
+            `📊 LIVE RISK ASSESSMENT: <strong style="font-size:1.45em;">${demoData.riskScore}/100</strong><br>
+             <small style="opacity:0.85;">Delay: ${demoData.submitDelay}s • Typing: ${demoData.typingWPM}wpm • Entropy: ${demoData.mouseEntropy} • Hesitation: ${demoData.hesitationScore}%</small>`;
+
+        /**
+         * Show typing indicator before AI response
+         */
+        function showTypingIndicator() {
+            const existingTyping = document.getElementById('typingIndicator');
+            if (existingTyping) existingTyping.remove();
+            
+            const typingDiv = document.createElement('div');
+            typingDiv.id = 'typingIndicator';
+            typingDiv.className = 'typing';
+            typingDiv.innerHTML = `
+                <div class="typing__dots">
+                    <span></span><span></span><span></span>
+                </div>
+                <span>SkylaB AI analyzing security context...</span>
+            `;
+            chatBox.appendChild(typingDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        /**
+         * Typewriter effect for realistic AI responses
+         */
+        function typeWriter(text, callback) {
+            const existingTyping = document.getElementById('typingIndicator');
+            if (existingTyping) existingTyping.remove();
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message message--ai';
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            
+            let charIndex = 0;
+            const cursor = document.createElement('span');
+            cursor.className = 'cursor';
+            cursor.textContent = '|';
+            
+            const typeInterval = setInterval(() => {
+                if (charIndex < text.length) {
+                    messageDiv.innerHTML = text.slice(0, charIndex + 1);
+                    messageDiv.appendChild(cursor);
+                    charIndex++;
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                } else {
+                    clearInterval(typeInterval);
+                    cursor.remove();
+                    if (callback) callback();
+                }
+            }, 36);
+        }
+
+        /**
+         * Progress through educational conversation
+         */
+        function playNextMessage() {
+            if (messageIndex >= educationalMessages.length) return;
+            
+            const currentMessage = educationalMessages[messageIndex];
+            
+            if (currentMessage.role === 'user') {
+                // User message (immediate)
+                const userDiv = document.createElement('div');
+                userDiv.className = 'message message--user';
+                userDiv.textContent = currentMessage.text;
+                chatBox.appendChild(userDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+                messageIndex++;
+                setTimeout(playNextMessage, 1100);
+            } else {
+                // AI response with typing effect
+                showTypingIndicator();
+                setTimeout(() => {
+                    typeWriter(currentMessage.text, () => {
+                        messageIndex++;
+                        const delay = currentMessage.role === 'risk' ? 3200 : 900 + Math.random() * 1400;
+                        setTimeout(playNextMessage, delay);
+                    });
+                }, 400);
+            }
+        }
+
+        // Auto-scroll to bottom
+        setInterval(() => {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 80);
+
+        // Start conversation after short delay
+        setTimeout(playNextMessage, 500);
+
+        // Handle window resize for scroll
+        window.addEventListener('resize', () => {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic metadata for phishing simulation landing page -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure SkylaB Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-body">
+    <!-- Navigation branding -->
+    <nav class="navbar">
+        <h3 class="navbar__title">SkylaB</h3>
+        <span class="navbar__subtitle">Secure Access Portal</span>
+    </nav>
+
+    <!-- Main phishing simulation container -->
+    <main class="container">
+        <div class="flip-card">
+            <div class="card__inner" id="cardInner">
+                <!-- Front: Login form (primary phishing target) -->
+                <section class="card__face card__face--front" aria-labelledby="login-title">
+                    <h1 class="card__title" id="login-title">SkylaB</h1>
+                    
+                    <!-- Phishing credential capture form -->
+                    <form id="loginForm" action="/login" method="POST">
+                        <!-- Username/email field -->
+                        <div class="form__group">
+                            <input 
+                                type="text" 
+                                id="usernameField" 
+                                name="username" 
+                                required 
+                                aria-label="Username or Email"
+                                class="form__group--input"
+                                placeholder=" "
+                            >
+                            <label for="usernameField" class="form__group--label">Username or Email</label>
+                        </div>
+
+                        <!-- Password field with behavioral triggers -->
+                        <div class="form__group">
+                            <input 
+                                type="password" 
+                                id="passwordField" 
+                                name="password" 
+                                required
+                                class="form__group--input"
+                                placeholder=" "
+                            >
+                            <label for="passwordField" class="form__group--label">Password</label>
+                        </div>
+
+                        <!-- Submit button (triggers biometrics logging) -->
+                        <button type="submit" class="submit__btn" aria-label="Sign in securely">
+                            🔐 Sign In Securely
+                        </button>
+                    </form>
+
+                    <!-- Urgency nudge (phishing tactic simulation) -->
+                    <p class="note urgency">
+                        ⚠️ Login NOW - Session expires in 60 seconds | 
+                        Protected by OJASGREYY SECURITY (typo intentional)
+                    </p>
+                </section>
+
+                <!-- Back: Decorative signup tease (distraction) -->
+                <section class="card__face card__face--back" aria-hidden="true">
+                    <h2 class="card__title">Employee Portal</h2>
+                    <p>
+                        Contact IT Department<br>
+                        for New Account Setup
+                    </p>
+                    <button type="button" class="submit__btn toggle__btn">
+                        Back to Login
+                    </button>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Behavioral tracking & validation script -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
+
